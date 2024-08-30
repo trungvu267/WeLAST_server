@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const {fetchRepositories} = require('./fetch-github-repos.js');
+const {fetchRepositories,getRepoCommits} = require('./fetch-github-repos.js');
 
 const app = express();
 const PORT = 3000;
@@ -15,7 +15,6 @@ app.get('', async (req, res) => {
 });
 
 app.get('/repos', async (req, res) => {
-
     try {
         const response = await fetchRepositories()
 
@@ -38,6 +37,26 @@ app.get('/repos', async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch repositories from GitHub' });
     }
 });
+
+app.get('/commits' , async (req, res) => {
+	try {
+			const { owner, repo_name } = req.query;
+			if (!owner || !repo_name) {
+			  return res.status(400).json({ message: 'Owner and repo_name are required' });
+			}
+			
+			const commits = await getRepoCommits({
+			  owner,
+			  repo_name,
+			});
+			
+			res.status(200).json(commits);
+
+    } catch (error) {
+        console.error('Error fetching data from GitHub API:', error);
+        res.status(500).json({ message: 'Failed to fetch repositories from GitHub' });
+    }
+})
 
 // Start the server
 app.listen(PORT, () => {

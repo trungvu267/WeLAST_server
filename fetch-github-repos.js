@@ -17,5 +17,24 @@ async function fetchRepositories() {
     console.error('Error fetching data from GitHub API:', error.response.data);
   }
 }
+async function getRepoCommits({ owner, repo_name }) {
+	try {
+		const response = await axios.get(
+			`https://api.github.com/repos/${owner}/${repo_name}/commits`,
+			{
+				headers: {
+					Authorization: `token ${GITHUB_TOKEN}`,
+				},
+			}
+		);
 
-module.exports = {fetchRepositories};
+		return response.data;
+	} catch (error) {
+		console.error(
+			"Error fetching data from GitHub API:",
+			error.response.data
+		);
+	}
+}
+
+module.exports = {fetchRepositories,getRepoCommits};
