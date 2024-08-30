@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const {fetchRepositories} = require('./fetch-github-repos.js');
 
 const app = express();
 const PORT = 3000;
@@ -16,7 +17,7 @@ app.get('', async (req, res) => {
 app.get('/repos', async (req, res) => {
 
     try {
-        const response = await axios.get('https://api.github.com/users/freeCodeCamp/repos');
+        const response = await fetchRepositories()
 
         let filtered_repos = response.data.filter(repo => !repo.fork && repo.forks > 5);
 
